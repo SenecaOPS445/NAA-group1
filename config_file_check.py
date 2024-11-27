@@ -24,6 +24,7 @@ def config_file_check():
 
         except (FileExistsError, FileNotFoundError):
             print('ERROR: Unable to open or locate the configuration file.')
+            sys.exit()
             #quit
 
     #Creates a configuration file if no argument is provided
@@ -36,7 +37,7 @@ def config_file_check():
         print('This program can only accept 1, or no arguments. \n' + 'Execute without an argument to create a configuration file.\n' + 'Execute with 1 argument with the location of your configuration file.')
 
 
-def run_backup():
+def run_backup(): #made change here
     #Creates a list of parameters from the configuration file.
     f = open(sys.argv[1], 'r')
     read_config = f.read()
@@ -62,12 +63,28 @@ def run_backup():
         print('Backing up directory')
         os.popen(cp_command)
         print('Directory has been backed up')
-
-
+def backup_setup():
+    print ('We noticed that you did not provide a config file, We are going to create one! \n')
+    config_name = input('What would you like the name of your configuration to be?\n')
+    config_name = (config_name + '.txt')
+    src_path = input('Please enter the source file/directory path that you would like to back up starting from root:\n')
+    dest_dir = input('Please enter the file path for where you would like to save the file starting from root:\n')
+    compression = compress_type() #ryan
+    list1 = [src_path, dest_dir, compression]
+    f = open(config_name, 'w')
+    for item in list1:
+        f.write(str(item) + '\n')
+    f.close()
+    sys.argv.append(config_name)
+    run_backup()
+def compress_type():
+    return 'bzip'
 if __name__ == '__main__':
     x = config_file_check()
     if x == 'good_config_file':
         run_backup()
     
     if x == 'backup_setup':
-        print('call backup_setup()')
+        backup_setup()
+    
+    
