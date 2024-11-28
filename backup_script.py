@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+''''''
+
 import sys
 import os
 
@@ -17,8 +19,6 @@ def config_file_check():
                 print('ERROR: No contents in the configuration file. ')
                 
             else:
-                print('call config_reader()')
-                #run_backup()
                 return 'good_config_file'
                                 
 
@@ -43,11 +43,10 @@ def backup_setup():
     print ('We noticed that you did not provide a configuration file, We are going to create one! \n  The configuration file will be saved in the current directory. ')
     config_name = input('What would you like the name of your configuration file to be?\n')
     config_name = (config_name + '.txt')
-    src_path = input('Please enter the source file/directory path that you would like to back up starting from root:\n')
+    src_path = input('Please enter the source file/directory path that you would like to back up starting from root:\n (HINT: DO NOT END DIRECTORY PATH WITH A BACKSLASH)')
     dest_dir = input('Please enter the file path for where you would like to save the file starting from root:\n')
-    #compression = compress_type() #ryan
     comp_type, src_type = compress_type()
-    ####### Need log file destination -jonathon
+    
     
     list1 = [src_path, dest_dir, comp_type, src_type]
     f = open(config_name, 'w')
@@ -87,7 +86,6 @@ def compress_type():
 
 #   Will ask the user if it is a file or directory
     src_type = input("dir or file?: ")
-    '''new code from jonathon'''
     return c_type, src_type
 
 
@@ -114,7 +112,6 @@ def compression(c_type, src_type, file):
             f_in.close()
 #           print out c_file
             print(c_file)
-            '''new code added by jon'''
             return c_file
 
         if c_type == 'bz2':
@@ -131,7 +128,6 @@ def compression(c_type, src_type, file):
             f_in.close()
 #           print out c_file
             print(c_file)
-            '''new code added by jon'''
             return c_file
 
     if src_type == 'dir':
@@ -140,34 +136,37 @@ def compression(c_type, src_type, file):
         isolate_name = file.split('/')
         folder_name = isolate_name[-1]
 
+        parent_directory_list = isolate_name[:-1]
+        parent_directory = '/'.join(parent_directory_list)
+
+
         if c_type == 'gzip':
 #           c_folder will add .tar.gz at the end of the name
             c_folder = folder_name + '.tar.gz'
 #           will run the command to compress the directory in gzip format
-            
-            os.system(f'tar -zcvf {c_folder} {file}')
+            os.system(f'cd {parent_directory} && tar -zcf {c_folder} {folder_name}')
+            #os.system(f'tar -zcvf {c_folder} {file}')
 #           command to see the what files are in the compressed directory
             #view_c = os.system('tar -tf' + c_folder)
 #           will print os.system command above
             #print(view_c)
-            '''new code by jon'''
             return c_folder
 
         if c_type == 'bz2':
 #           c_folder will add .tar.bz2 at the end of the name
-            c_folder = file + '.tar.bz2'
+            c_folder = folder_name + '.tar.bz2'
 #           will run the command to compress the directory in bz2 format
-            os.system('tar -cjvf' + c_folder + file)
+            print('This is what you are backing up:')
+            os.system(f'cd {parent_directory} && tar -cjvf {c_folder} {folder_name}')
 #           command to see the what files are in the compressed directory
-            view_c = os.system('tar -tf' + c_folder)
+            #view_c = os.system('tar -tf' + c_folder)
 #           will print os.system command above
-            print(view_c)
-            '''new code by jon'''
+            #print('These are the files that have been backed up: \n' + str(view_c))
             return c_folder
 
 
 
-    #return str(c_type) -jonathon
+
 
 
 
@@ -184,24 +183,22 @@ def run_backup(): #made change here
     comp_type = config_parameter_list[2]
     src_type = config_parameter_list[3]
 
-
+    import time
     #For a single file
     if os.path.isfile(backup_src):
-        #source_file = config_parameter_list[0]
         new_name = compression(comp_type, src_type, backup_src)
         cp_command = f"cp {new_name} {dest_dir}"
         print('Backing up file')
-        
+        time.sleep(2)
         os.popen(cp_command)
         print('File has been backed up')
 
     #For an entire directory
     if os.path.isdir(backup_src):
-        #source_dir = config_parameter_list[0]
         new_name = compression(comp_type, src_type, backup_src)
         cp_command = f"cp -r {new_name} {dest_dir}"
-        print('Backing up directory')
-        
+        print('\nBacking up directory')
+        time.sleep(2)
         os.popen(cp_command)
         print('Directory has been backed up')
 
