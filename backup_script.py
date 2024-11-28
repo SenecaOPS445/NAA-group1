@@ -37,17 +37,74 @@ def config_file_check():
         print('This program can only accept 1, or no arguments. \n' + 'Execute without an argument to create a configuration file.\n' + 'Execute with 1 argument with the location of your configuration file.')
 
 
+def path_finder(path_given):
+    '''
+This function prompts user for a file or file path, and verifies whether it can be found on the system.
+If it does not exist, the user will get prompted to re-enter the file or path they wish to backup.
+If the file or file path exists, the provided input will be set as the source for the backup.
+'''
+
+	# While Loop used to prompt user until valid path or filename which exists on system, is provided
+	# path_exist is a value of 0 when the input provided does not exist on the system
+	
+    if os.path.isfile(path_given):
+        path_exist = 0
+        while path_exist == 0:
+		# Prompts user for file or file path input
+			# If file or folder exists
+            if os.path.exists(path_given):
+                print("Thank you :)")
+			# Stores the validated input into a variable
+                verified_path = path_given
+			# Sets path_exist to value of 1 which will stop the loop
+                return verified_path
+                path_exist = 1
+
+		# If file or folder does not exist
+            else:
+			# Warns user about the error
+                print("The provided input does not exist. Please try again.")
+			# Loop will continue as path_exist is set to 0
+                path_exist = 0
+                path_given = input("Enter correct path: ")
+    if os.path.isdir(path_given):
+          
+        path_exist = 0
+        while path_exist == 0:
+		# Prompts user for file or file path input
+			# If file or folder exists
+            if os.path.exists(path_given):
+                print("Thank you :)")
+			# Stores the validated input into a variable
+                verified_path = path_given
+			# Sets path_exist to value of 1 which will stop the loop
+                return verified_path
+                path_exist = 1
+
+
+		# If file or folder does not exist
+            else:
+			# Warns user about the error
+                print("The provided input does not exist. Please try again.")
+			# Loop will continue as path_exist is set to 0
+                path_exist = 0
+                path_given = input("Enter correct path: ")
 
 
 def backup_setup():
     print ('We noticed that you did not provide a configuration file, We are going to create one! \n  The configuration file will be saved in the current directory. ')
     config_name = input('What would you like the name of your configuration file to be?\n')
     config_name = (config_name + '.txt')
-    src_path = input('Please enter the source file/directory path that you would like to back up starting from root:\n (HINT: DO NOT END DIRECTORY PATH WITH A BACKSLASH)')
-    dest_dir = input('Please enter the file path for where you would like to save the file starting from root:\n')
+    test_src_path = input('Please provide an absolute source path of the file or directory you want to backup: ')
+    src_path = path_finder(test_src_path)
+
+    test_dest_path = input('Please provide an absolute path of the destination directory you want to store the backup to: ')
+
+    dest_dir = path_finder(test_dest_path)
+    
+    
     comp_type, src_type = compress_type()
-    
-    
+
     list1 = [src_path, dest_dir, comp_type, src_type]
     f = open(config_name, 'w')
     for item in list1:
@@ -55,6 +112,8 @@ def backup_setup():
     f.close()
     sys.argv.append(config_name)
     run_backup()
+
+
 
 
 

@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
+#!/usr/bin/env python3
 #NAMES: Ryan Aquila, Jonathon Dimitrakopoulos, Umer Rizwan, Krishan Sivanathan and Dev Sudhirkumar Patel
 #Assignment2 Final Version
 #OPS445
+
+''''''
 
 import sys
 import os
@@ -19,10 +22,10 @@ def config_file_check():
             #Prints error message if config file is empty
             if not read_config:
                 print('ERROR: No contents in the configuration file. ')
-
+                
             else:
                 return 'good_config_file'
-
+                                
 
         except (FileExistsError, FileNotFoundError):
             print('ERROR: Unable to open or locate the configuration file.')
@@ -33,48 +36,106 @@ def config_file_check():
     elif len(sys.argv) == 1:
         #print('call backup_setup()')
         return 'backup_setup'
-
+    
     #Instructs user on how to use the correct syntax for the script.
     else:
         print('This program can only accept 1, or no arguments. \n' + 'Execute without an argument to create a configuration file.\n' + 'Execute with 1 argument with the location of your configuration file.')
 
 
+def path_finder(path_given):
+    '''
+This function prompts user for a file or file path, and verifies whether it can be found on the system.
+If it does not exist, the user will get prompted to re-enter the file or path they wish to backup.
+If the file or file path exists, the provided input will be set as the source for the backup.
+'''
+
+	# While Loop used to prompt user until valid path or filename which exists on system, is provided
+	# path_exist is a value of 0 when the input provided does not exist on the system
+	
+    if os.path.isfile(path_given):
+        path_exist = 0
+        while path_exist == 0:
+		# Prompts user for file or file path input
+			# If file or folder exists
+            if os.path.exists(path_given):
+                print("Thank you :)")
+			# Stores the validated input into a variable
+                verified_path = path_given
+			# Sets path_exist to value of 1 which will stop the loop
+                return verified_path
+                path_exist = 1
+
+		# If file or folder does not exist
+            else:
+			# Warns user about the error
+                print("The provided input does not exist. Please try again.")
+			# Loop will continue as path_exist is set to 0
+                path_exist = 0
+                path_given = input("Enter correct path: ")
+    if os.path.isdir(path_given):
+          
+        path_exist = 0
+        while path_exist == 0:
+		# Prompts user for file or file path input
+			# If file or folder exists
+            if os.path.exists(path_given):
+                print("Thank you :)")
+			# Stores the validated input into a variable
+                verified_path = path_given
+			# Sets path_exist to value of 1 which will stop the loop
+                return verified_path
+                path_exist = 1
+
+
+		# If file or folder does not exist
+            else:
+			# Warns user about the error
+                print("The provided input does not exist. Please try again.")
+			# Loop will continue as path_exist is set to 0
+                path_exist = 0
+                path_given = input("Enter correct path: ")
 
 
 def backup_setup():
- #  Prompting user for basic configuration so we can write it into config file
     print ('We noticed that you did not provide a configuration file, We are going to create one! \n  The configuration file will be saved in the current directory. ')
     config_name = input('What would you like the name of your configuration file to be?\n')
     config_name = (config_name + '.txt')
-    src_path = input('Please enter the source file/directory path that you would like to back up starting from root:\n (HINT: DO NOT END DIRECTORY PATH WITH A BACKSLASH)')
-    dest_dir = input('Please enter the file path for where you would like to save the file starting from root:\n')
-    # prompts for compression type and src type by calling compress_type function
+    test_src_path = input('Please provide an absolute source path of the file or directory you want to backup: ')
+    src_path = path_finder(test_src_path)
+
+    test_dest_path = input('Please provide an absolute path of the destination directory you want to store the backup to: ')
+
+    dest_dir = path_finder(test_dest_path)
+    
+    
     comp_type, src_type = compress_type()
 
-# create list of config parameters to split and write into config file
     list1 = [src_path, dest_dir, comp_type, src_type]
     f = open(config_name, 'w')
     for item in list1:
-        f.write(str(item) + '\n')#writing to file line by line
+        f.write(str(item) + '\n')
     f.close()
-    sys.argv.append(config_name)#append the newly created config file to cli agruments list so we dont have to make new function instead we can just call run_backup()
+    sys.argv.append(config_name)
     run_backup()
+
+
 
 
 
 def compress_type():
 ########################
-#    The compress_type function will ask the user to type in a compress option between gzip or bz2 and a source type
-#    A while loop will be used to make sure that the correct options have been selected.
+#    The compress_type function will ask the user to type in a compress option between gzip or bz2  
+#    A while loop will be used to make sure that the correct option has been selected.
 #    if not the while loop will continue and will ask for the user input again.
 #    If user has selected the right option then the while loop will end and will print a message saying what the user picked.
 ########################
+    
 
 
 #   This will print the options the user can choose from for their compress type
     print('Compression options are gzip or bz2')
 
-#   Will ask the user for their input
+#   Will ask the user for their input    
     c_type = input('Select an option: ')
 
 #   The while loop will run if c_type does not equal gzip or bz2
@@ -89,14 +150,6 @@ def compress_type():
 
 #   Will ask the user if it is a file or directory
     src_type = input("dir or file?: ")
-
-# If the src_type does not equal 'dir' or 'file' then it will go into a while loop
-# it will end when src_type equals 'dir' or 'file'
-    while src_type != 'dir' and src_type != 'file':
-        print("Valid Source types are dir or file")
-        src_type = input("Try again: ")
-    print('You picked ' + src_type)
-
     return c_type, src_type
 
 
@@ -116,7 +169,7 @@ def compression(c_type, src_type, file):
             f_in = open(file, 'rb')
 #           f_out will equal a open gzip file that we can write to
             f_out = gzip.open(c_file, 'wb')
-#           will write each line from f_in to f_out
+#           will write the line from f_in to f_out
             f_out.writelines(f_in)
 #           Will close both files
             f_out.close()
@@ -132,7 +185,7 @@ def compression(c_type, src_type, file):
             f_in = open(file, 'rb')
 #           f_out will equal a open gzip file that we can write to
             f_out = bz2.open(c_file, 'wb')
-#           will write each line from f_in to f_out
+#           will write the line from f_in to f_out
             f_out.writelines(f_in)
 #           Will close both files
             f_out.close()
@@ -145,20 +198,22 @@ def compression(c_type, src_type, file):
 #       file will equal the directory that will be compressed
         #This list isolates the file name from the file path
         isolate_name = file.split('/')
-#       Will take the last item in the list
         folder_name = isolate_name[-1]
 
         parent_directory_list = isolate_name[:-1]
-#       Will make the list join as a file path
         parent_directory = '/'.join(parent_directory_list)
 
 
         if c_type == 'gzip':
 #           c_folder will add .tar.gz at the end of the name
             c_folder = folder_name + '.tar.gz'
-            print('This is what you are backing up:')
 #           will run the command to compress the directory in gzip format
             os.system(f'cd {parent_directory} && tar -zcf {c_folder} {folder_name}')
+            #os.system(f'tar -zcvf {c_folder} {file}')
+#           command to see the what files are in the compressed directory
+            #view_c = os.system('tar -tf' + c_folder)
+#           will print os.system command above
+            #print(view_c)
             return c_folder
 
         if c_type == 'bz2':
@@ -167,8 +222,16 @@ def compression(c_type, src_type, file):
 #           will run the command to compress the directory in bz2 format
             print('This is what you are backing up:')
             os.system(f'cd {parent_directory} && tar -cjvf {c_folder} {folder_name}')
+#           command to see the what files are in the compressed directory
+            #view_c = os.system('tar -tf' + c_folder)
+#           will print os.system command above
             #print('These are the files that have been backed up: \n' + str(view_c))
             return c_folder
+
+
+
+
+
 
 
 def run_backup(): #made change here
@@ -207,6 +270,8 @@ if __name__ == '__main__':
     x = config_file_check()
     if x == 'good_config_file':
         run_backup()
-
+    
     if x == 'backup_setup':
         backup_setup()
+    
+    
