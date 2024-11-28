@@ -139,15 +139,17 @@ def compression(c_type, src_type, file):
         #This list isolates the file name from the file path
         isolate_name = file.split('/')
         folder_name = isolate_name[-1]
+
         if c_type == 'gzip':
 #           c_folder will add .tar.gz at the end of the name
-            c_folder = file + '.tar.gz'
+            c_folder = folder_name + '.tar.gz'
 #           will run the command to compress the directory in gzip format
-            os.system('tar -zcvf' + c_folder + file)
+            
+            os.system(f'tar -zcvf {c_folder} {file}')
 #           command to see the what files are in the compressed directory
-            view_c = os.system('tar -tf' + c_folder)
+            #view_c = os.system('tar -tf' + c_folder)
 #           will print os.system command above
-            print(view_c)
+            #print(view_c)
             '''new code by jon'''
             return c_folder
 
