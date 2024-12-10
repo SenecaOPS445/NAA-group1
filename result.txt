@@ -1,0 +1,25 @@
+
+--------------------------------------------------
+group1
+--------------------------------------------------
+Python Version: 3.12.7 (main, Oct  1 2024, 11:15:50) [GCC 14.2.1 20240910]
+Ran on 2024-12-02 10:57:00.347774
+Git commit used: commit 21dc599cb7ba9a718f3346965481232992de4eff
+Merge: 85ab0ab e927117
+Author: yuuumer <135661761+yuuumer@users.noreply.github.com>
+Date:   Thu Nov 28 11:15:11 2024 -0500
+
+    Merge pull request #9 from SenecaOPS445/compression-type
+    
+    Assignment 2 with comments script
+
+
+--------------------------------------------------
+Relevant, useful, shows ambition           3.0/  3
+Comments and Documentation                 5.0/  5
+Adequate commits with good messages        5.0/  5
+No redundant code, variable names          1.0/  2
+
+--------------------------------------------------
+Total: 14.0/15
+FEEDBACK:
